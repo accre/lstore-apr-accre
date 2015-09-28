@@ -162,6 +162,74 @@ APR_DECLARE(apr_status_t) apr_socket_sendv(apr_socket_t *sock,
     return rc;
 }
 
+APR_DECLARE(apr_status_t) apr_socket_recvv(apr_socket_t *sock,
+                                           const struct iovec *vec,
+                                           apr_int32_t in_vec, apr_size_t *nbytes)
+{
+    apr_status_t rc = APR_SUCCESS;
+    apr_ssize_t rv;
+    apr_size_t cur_len;
+    apr_int32_t nvec = 0;
+    int i, j = 0;
+    DWORD dwBytes = 0;
+    WSABUF *pWsaBuf;
+
+    for (i = 0; i < in_vec; i++) {
+        cur_len = vec[i].iov_len;
+        nvec++;
+        while (cur_len > APR_DWORD_MAX) {
+            nvec++;
+            cur_len -= APR_DWORD_MAX;
+        }
+    }
+
+    pWsaBuf = (nvec <= WSABUF_ON_STACK) ? _alloca(sizeof(WSABUF) * (nvec))
+                                         : malloc(sizeof(WSABUF) * (nvec));
+    if (!pWsaBuf)
+        return APR_ENOMEM;
+
+    for (i = 0; i < in_vec; i++) {
+        char * base = vec[i].iov_base;
+        cur_len = vec[i].iov_len;
+
+        do {
+            if (cur_len > APR_DWORD_MAX) {
+                pWsaBuf[j].buf = base;
+                pWsaBuf[j].len = APR_DWORD_MAX;
+                cur_len -= APR_DWORD_MAX;
+                base += APR_DWORD_MAX;
+            }
+            else {
+                pWsaBuf[j].buf = base;
+                pWsaBuf[j].len = (DWORD)cur_len;
+                cur_len = 0;
+            }
+            j++;
+
+        } while (cur_len > 0);
+    }
+#ifndef _WIN32_WCE
+    rv = WSARecv(sock->socketdes, pWsaBuf, nvec, &dwBytes, 0, NULL, NULL);
+    if (rv == SOCKET_ERROR) {
+        rc = apr_get_netos_error();
+    }
+#else
+    for (i = 0; i < nvec; i++) {
+        rv = recv(sock->socketdes, pWsaBuf[i].buf, pWsaBuf[i].len, 0);
+        if (rv == SOCKET_ERROR) {
+            rc = apr_get_netos_error();
+            break;
+        }
+        dwBytes += rv;
+    }
+#endif
+    if (nvec > WSABUF_ON_STACK)
+        free(pWsaBuf);
+
+    *nbytes = dwBytes;
+    return rc;
+}
+
 
 APR_DECLARE(apr_status_t) apr_socket_sendto(apr_socket_t *sock,
                                             apr_sockaddr_t *where,

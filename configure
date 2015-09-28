@@ -10307,7 +10307,7 @@ $as_echo "$ac_cv_ebcdic" >&6; }
 
 
 
-APR_LIBNAME="apr${libsuffix}"
+APR_LIBNAME="apr-ACCRE${libsuffix}"
 
 
 echo "performing libtool configuration..."
@@ -28562,7 +28562,7 @@ esac
 
 
 
-ac_config_files="$ac_config_files Makefile include/apr.h build/apr_rules.mk build/pkg/pkginfo apr-$APR_MAJOR_VERSION-config:apr-config.in apr.pc"
+ac_config_files="$ac_config_files Makefile include/apr.h build/apr_rules.mk build/pkg/pkginfo apr-ACCRE-$APR_MAJOR_VERSION-config:apr-config.in apr.pc"
 
 
 if test -d $srcdir/test; then
@@ -29572,7 +29572,7 @@ do
     "include/apr.h") CONFIG_FILES="$CONFIG_FILES include/apr.h" ;;
     "build/apr_rules.mk") CONFIG_FILES="$CONFIG_FILES build/apr_rules.mk" ;;
     "build/pkg/pkginfo") CONFIG_FILES="$CONFIG_FILES build/pkg/pkginfo" ;;
-    "apr-$APR_MAJOR_VERSION-config") CONFIG_FILES="$CONFIG_FILES apr-$APR_MAJOR_VERSION-config:apr-config.in" ;;
+    "apr-ACCRE-$APR_MAJOR_VERSION-config") CONFIG_FILES="$CONFIG_FILES apr-ACCRE-$APR_MAJOR_VERSION-config:apr-config.in" ;;
     "apr.pc") CONFIG_FILES="$CONFIG_FILES apr.pc" ;;
     "test/Makefile") CONFIG_FILES="$CONFIG_FILES test/Makefile" ;;
     "test/internal/Makefile") CONFIG_FILES="$CONFIG_FILES test/internal/Makefile" ;;
@@ -30775,7 +30775,7 @@ $as_echo "$as_me: $i is unchanged" >&6;}
   fi
   rm -f $i.save
 done
-chmod +x apr-$APR_MAJOR_VERSION-config
+chmod +x apr-ACCRE-$APR_MAJOR_VERSION-config
  ;;
 
   esac

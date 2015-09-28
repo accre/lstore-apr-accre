@@ -521,6 +521,28 @@ APR_DECLARE(apr_status_t) apr_socket_sendv(apr_socket_t *sock,
                                            apr_int32_t nvec, apr_size_t *len);
 
 /**
+ * Receive network data store it in multiple buffers.
+ * @param sock The socket to read the data from.
+ * @param vec The array of iovec structs for storing data
+ * @param nvec The number of iovec structs in the array
+ * @param len Receives the number of bytes actually read
+ * @remark
+ * <PRE>
+ * This functions acts like a blocking read by default.  To change
+ * this behavior, use apr_socket_timeout_set() or the APR_SO_NONBLOCK
+ * socket option.
+ * The number of bytes actually sent is stored in argument 4.
+ *
+ * It is possible for both bytes to be read and an error to be returned.
+ *
+ * APR_EINTR is never returned.
+ * </PRE>
+ */
+APR_DECLARE(apr_status_t) apr_socket_recvv(apr_socket_t *sock,
+                                           const struct iovec *vec,
+                                           apr_int32_t nvec, apr_size_t *len);
+
+/**
  * @param sock The socket to send from
  * @param where The apr_sockaddr_t describing where to send the data
  * @param flags The flags to use
